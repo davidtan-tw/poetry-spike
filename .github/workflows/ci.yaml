@@ -1,0 +1,22 @@
+name: CI pipeline
+on: [push]
+jobs:
+  run-tests:
+    strategy:
+      matrix:
+        python-version: [ "3.10" ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: 'poetry'
+      - name: Install dependencies
+        run: |
+          pip install poetry
+          poetry install
+          poetry run python -m spacy download en_core_web_lg
+      - name: Run unit tests
+        run: poetry run ./scripts/tests/run-unit-tests.sh

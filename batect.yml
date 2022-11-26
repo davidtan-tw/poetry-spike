@@ -1,0 +1,36 @@
+containers:
+  dev:
+    build_directory: .
+    volumes:
+      - local: .
+        container: /code
+      - type: cache
+        name: venv
+        container: /usr/local/lib/python3.10/site-packages/ # pip packages + spacy en_core_web_lg
+
+tasks:
+  start-dev-container:
+    description: Start containerised development environment
+    run:
+      container: dev
+      command: bash
+
+  start-jupyter:
+    description: Start Jupyter Notebook
+    run:
+      container: dev
+      command: scripts/start-jupyter.sh
+      ports:
+        - 8888:8888
+
+  run-unit-tests:
+    description: Run unit tests
+    run:
+      container: dev
+      command: scripts/tests/run-unit-tests.sh
+
+  sanitise-notebooks:
+    description: Sanitise notebooks
+    run:
+      container: dev
+      command: scripts/sanitise-notebooks.sh
